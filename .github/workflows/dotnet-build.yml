@@ -1,0 +1,36 @@
+name: modulo4-Workflow
+
+on:
+  pull_request:        
+  schedule:
+    - cron: '0 * * * *'  
+
+jobs:
+  job_1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Rodar ChatGPT Code Reviewer
+        uses: anc95/chatgpt-code-review@v1
+        with:
+          openai_key: ${{ secrets.OPENAI_API_KEY }}  
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          language: pt  
+          review_comment_lgtm: true  
+  
+  job_2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      - name: Avisar se arquivos .tx foram adicionados ou modificados
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.tx$'; then
+            echo "Arquivo .tx detectado"
+          else
+            echo "Nenhum arquivo .tx encontrado."
+          fi
