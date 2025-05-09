@@ -1,32 +1,32 @@
 name: modulo4-Workflow
 
 on:
-  pull_request:        
+  push:                             # Executa ao fazer push
   schedule:
-    - cron: '0 * * * *'  
+    - cron: '0 * * * *'             # Executa a cada hora (UTC)
 
 jobs:
-  job_1:
+  lint_job:
+    name: Verificação com Super-Linter
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Rodar ChatGPT Code Reviewer
-        uses: anc95/chatgpt-code-review@v1
-        with:
-          openai_key: ${{ secrets.OPENAI_API_KEY }}  
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          language: pt  
-          review_comment_lgtm: true  
-  
-  job_2:
+      - name: Rodar Super Linter
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  check_tx_files:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
+
       - name: Avisar se arquivos .tx foram adicionados ou modificados
         run: |
           if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.tx$'; then
