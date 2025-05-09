@@ -1,9 +1,9 @@
 name: modulo4-Workflow
 
 on:
-  push:                             # Executa ao fazer push
+  push:                             
   schedule:
-    - cron: '0 * * * *'             # Executa a cada hora (UTC)
+    - cron: '0 * * * *'             
 
 jobs:
   lint_job:
